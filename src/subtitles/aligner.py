@@ -1,6 +1,5 @@
-import os
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from ..core.models import WordTimestamp, SubtitleChunk
 from ..core.config_loader import get_storage_dir
 
@@ -35,16 +34,19 @@ class WordAligner:
                     "Please install faster-whisper (pip install faster-whisper) or whisper."
                 )
 
-    def extract_word_timestamps(self, audio_path: Path) -> List[WordTimestamp]:
+    def extract_word_timestamps(self, audio_path: Path, prompt: Optional[str] = None) -> List[WordTimestamp]:
         words: List[WordTimestamp] = []
 
         if self.backend == "faster-whisper":
-            segments, _ = self.model.transcribe(
-                str(audio_path),
-                word_timestamps=True,
-                vad_filter=True,
-                vad_parameters=dict(min_silence_duration_ms=500)
-            )
+            transcribe_kwargs = {
+                "word_timestamps": True,
+                "vad_filter": True,
+                "vad_parameters": dict(min_silence_duration_ms=500)
+            }
+            if prompt:
+                transcribe_kwargs["initial_prompt"] = prompt
+
+            segments, _ = self.model.transcribe(str(audio_path), **transcribe_kwargs)
             for segment in segments:
                 for w in segment.words:
                     clean_w = w.word.strip()
@@ -56,7 +58,11 @@ class WordAligner:
                         ))
 
         elif self.backend == "whisper":
-            result = self.model.transcribe(str(audio_path), word_timestamps=True)
+            transcribe_kwargs = {"word_timestamps": True}
+            if prompt:
+                transcribe_kwargs["initial_prompt"] = prompt
+
+            result = self.model.transcribe(str(audio_path), **transcribe_kwargs)
             for segment in result.get("segments", []):
                 for w in segment.get("words", []):
                     clean_w = w.get("word", "").strip()

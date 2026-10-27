@@ -92,9 +92,9 @@ class PipelineOrchestrator:
         audio_path, duration = self.voice_engine.synthesize(script.narration, audio_file)
         print(f"      Audio generated ({duration:.2f}s): {audio_path}")
 
-        # Step 2: Timestamp alignment via faster-whisper
+        # Step 2: Timestamp alignment via faster-whisper (guided by script text)
         print("[2/5] Extracting precise word-level timestamps with faster-whisper...")
-        words = self.aligner.extract_word_timestamps(audio_path)
+        words = self.aligner.extract_word_timestamps(audio_path, prompt=script.narration)
         chunks = self.aligner.group_words_into_chunks(words, words_per_group=3)
         self.ass_builder.build_ass(chunks, ass_file)
         print(f"      Kinetic subtitles generated: {ass_file}")

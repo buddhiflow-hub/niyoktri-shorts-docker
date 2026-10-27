@@ -20,8 +20,8 @@ tts:
   volume: "+0%"
 
 stock:
-  primary_provider: "pexels"
-  fallback_provider: "pixabay"
+  primary_provider: "pixabay"
+  fallback_provider: "pexels"
   orientation: "portrait"
   min_clip_duration_s: 2.5
   max_clip_duration_s: 4.5
