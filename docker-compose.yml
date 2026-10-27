@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  shorts-factory:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: niyoktri_shorts_factory
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - STORAGE_DIR=/app/storage
+    volumes:
+      - ./storage:/app/storage
+      - ./config.yaml:/app/config.yaml:ro
+      - ./assets:/app/assets:ro
+    # Default is the automated background publishing daemon.
+    # To run a one-off single episode:
+    # docker compose run --rm shorts-factory python src/main.py --mode single --script /app/storage/input/episode.json
+    command: ["python", "src/main.py", "--mode", "daemon"]

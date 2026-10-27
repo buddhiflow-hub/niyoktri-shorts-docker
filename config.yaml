@@ -1,0 +1,63 @@
+# Niyoktri Dockerized Shorts Pipeline Configuration
+
+app:
+  name: "Niyoktri Shorts Factory"
+  log_level: "INFO"
+  storage_dir: "/app/storage"
+
+tts:
+  provider: "edge-tts"
+  default_voice: "en-US-ChristopherNeural"
+  # Options: en-US-ChristopherNeural, en-US-GuyNeural, en-GB-RyanNeural, hi-IN-MadhurNeural
+  rate: "+5%"
+  pitch: "+0Hz"
+  volume: "+0%"
+
+stock:
+  primary_provider: "pexels"
+  fallback_provider: "pixabay"
+  orientation: "portrait"
+  min_clip_duration_s: 2.5
+  max_clip_duration_s: 4.5
+  target_resolution:
+    width: 1080
+    height: 1920
+    fps: 30
+
+subtitles:
+  style_name: "KineticGold"
+  font_name: "Montserrat ExtraBold"
+  fallback_font: "Arial"
+  font_size: 72
+  primary_color: "&H00FFFFFF"      # Crisp White inactive
+  active_color: "&H0022FFFF"       # Radiant Gold active
+  outline_color: "&H00000000"      # Deep Black Outline
+  back_color: "&H80000000"         # Semi-transparent Shadow
+  bold: -1
+  outline_width: 5
+  shadow_depth: 3
+  margin_v: 384                    # Bottom safe-zone offset
+  words_per_group: 3
+  char_limit_per_group: 20
+  bounce_scale: 112                # Active word punch-in scale (%)
+
+audio:
+  bgm_volume: 0.14
+  bgm_duck_db: 15                  # Duck BGM by -15dB during voice
+  duck_attack_ms: 20
+  duck_release_ms: 250
+
+publisher:
+  timezone: "Asia/Kathmandu"       # NPT (UTC+5:45)
+  default_privacy: "scheduled"     # options: private, unlisted, public, scheduled
+  auto_add_to_playlist: true
+  channel_handle: "@Niyoktri"
+  daily_schedule:
+    - name: "Morning Drop"
+      hour: 10
+      minute: 0
+    - name: "Evening Drop"
+      hour: 18
+      minute: 0
+  max_daily_uploads: 6
+  lookahead_buffer_days: 2
