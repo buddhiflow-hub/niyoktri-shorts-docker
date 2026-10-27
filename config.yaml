@@ -5,6 +5,12 @@ app:
   log_level: "INFO"
   storage_dir: "/app/storage"
 
+llm:
+  provider: "auto"                 # Options: auto, groq, gemini
+  groq_model: "llama-3.3-70b-versatile"
+  gemini_model: "gemini-1.5-flash"
+  default_series: "Wisdom & Mindset"
+
 tts:
   provider: "edge-tts"
   default_voice: "en-US-ChristopherNeural"

@@ -4,6 +4,10 @@ An autonomous, GPU-free, Docker-ready pipeline for creating and auto-publishing 
 
 ## 🚀 Key Features
 
+- **AI Script Generator (Free Tier)**:
+  - **Groq API** (`llama-3.3-70b-versatile` / `llama-3.1-8b-instant` — ultra-fast 500 tokens/sec, 100% free).
+  - **Google Gemini API** (`gemini-1.5-flash` — deep reasoning, generous free tier).
+  - Automatically crafts a 45-60s retention hook, rhythmic body, loop ending, and 5-8 cinematic stock footage search queries.
 - **Ultrafast Voiceover**: Powered by **Microsoft Edge-TTS** (async neural speech synthesis, 0s GPU wait, natural human inflections).
 - **Dual Stock Footage Harvester**: Automated video search and download with smart fallback:
   - **Pexels Video API** (Primary HD/4K vertical footage)
@@ -92,7 +96,17 @@ Run a smoke test:
 docker compose run --rm shorts-factory python src/main.py --mode test
 ```
 
-Render a specific episode:
+Generate a Short completely from an AI topic (Groq / Gemini) and render it:
+```bash
+docker compose run --rm shorts-factory python src/main.py --mode generate --topic "How to stay calm under intense pressure"
+```
+
+Generate from topic and auto-publish to YouTube:
+```bash
+docker compose run --rm shorts-factory python src/main.py --mode generate --topic "How to stay calm under intense pressure" --publish
+```
+
+Render from an existing JSON script:
 ```bash
 docker compose run --rm shorts-factory python src/main.py --mode single --script /app/storage/input/sample_episode.json
 ```

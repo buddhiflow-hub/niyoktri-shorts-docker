@@ -167,11 +167,16 @@ class PipelineOrchestrator:
         )
 
 
+from .scripting.script_generator import ScriptGenerator
+
+
 @click.command()
-@click.option("--mode", type=click.Choice(["single", "batch", "daemon", "test"]), default="test", help="Execution mode")
-@click.option("--script", "script_path", type=click.Path(exists=True), help="Path to script JSON/Markdown file")
+@click.option("--mode", type=click.Choice(["single", "generate", "batch", "daemon", "test"]), default="test", help="Execution mode")
+@click.option("--script", "script_path", type=click.Path(exists=True), help="Path to script JSON file")
+@click.option("--topic", help="Topic for AI script generation (using Groq or Gemini)")
+@click.option("--llm", type=click.Choice(["auto", "groq", "gemini"]), default="auto", help="LLM provider for script generation")
 @click.option("--publish", is_flag=True, default=False, help="Automatically publish to YouTube upon completion")
-def cli(mode: str, script_path: Optional[str], publish: bool):
+def cli(mode: str, script_path: Optional[str], topic: Optional[str], llm: str, publish: bool):
     orchestrator = PipelineOrchestrator()
 
     if mode == "test":
@@ -191,6 +196,18 @@ def cli(mode: str, script_path: Optional[str], publish: bool):
         )
         orchestrator.process_episode(sample_script, auto_publish=publish)
 
+    elif mode == "generate":
+        if not topic:
+            print("Error: --topic is required for generate mode. Example: --topic 'How to conquer fear'")
+            sys.exit(1)
+        print(f"\n🧠 Generating AI script for topic: '{topic}' using {llm.upper()}...")
+        generator = ScriptGenerator(provider=llm)
+        script = generator.generate_from_topic(topic)
+        print(f"   ✅ Generated Title: {script.title}")
+        print(f"   ✅ Spoken Words: {len(script.narration.split())}")
+        print(f"   ✅ Stock Visual Cues: {', '.join(script.keywords)}")
+        orchestrator.process_episode(script, auto_publish=publish)
+
     elif mode == "single":
         if not script_path:
             print("Error: --script is required for single mode.")
@@ -208,3 +225,4 @@ def cli(mode: str, script_path: Optional[str], publish: bool):
 
 if __name__ == "__main__":
     cli()
+
