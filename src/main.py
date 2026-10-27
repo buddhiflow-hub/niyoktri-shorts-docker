@@ -5,6 +5,14 @@ import click
 from pathlib import Path
 from typing import Optional, List
 
+# Reconfigure stdout/stderr for UTF-8 on Windows consoles
+if sys.platform == 'win32':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
+
 from .core.config_loader import load_config, get_storage_dir
 from .core.models import EpisodeScript, RenderResult
 from .core.db import Database
@@ -14,7 +22,6 @@ from .subtitles.aligner import WordAligner
 from .subtitles.ass_builder import KineticAssBuilder
 from .composer.ffmpeg_engine import FFmpegComposer
 from .publisher.youtube import YouTubePublisher
-from .scheduler.cron_task import ShortsSchedulerDaemon
 
 
 class PipelineOrchestrator:
@@ -219,6 +226,7 @@ def cli(mode: str, script_path: Optional[str], topic: Optional[str], llm: str, p
         orchestrator.process_episode(script, auto_publish=publish)
 
     elif mode == "daemon":
+        from .scheduler.cron_task import ShortsSchedulerDaemon
         daemon = ShortsSchedulerDaemon()
         daemon.start()
 
